@@ -1,0 +1,80 @@
+:root{
+  --bg:#f7f3ee;--surface:#fff;--ink:#231a17;--muted:#74655f;--line:#e5dcd3;
+  --brand:#b3261e;--brand-ink:#fff;--ok:#2f7d4f;--warn:#b7791f;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1a1412;--surface:#261d1a;--ink:#f6ede6;--muted:#b3a299;--line:#3a2e29;--brand:#e5574d;--brand-ink:#1a1412;--ok:#5fc08a;--warn:#e2b04f}}
+:root[data-theme="dark"]{--bg:#1a1412;--surface:#261d1a;--ink:#f6ede6;--muted:#b3a299;--line:#3a2e29;--brand:#e5574d;--brand-ink:#1a1412;--ok:#5fc08a;--warn:#e2b04f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Figtree,system-ui,sans-serif;line-height:1.45}
+h1,h2,h3{font-family:'Bricolage Grotesque',Figtree,sans-serif;margin:0}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar{max-width:1100px;margin:auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.logo{font-size:1.4rem;font-weight:800;flex:1;color:var(--brand)}
+.tabs{display:flex;gap:4px}
+.tab{background:none;color:var(--muted);padding:8px 12px;font-weight:600}
+.tab[aria-selected=true]{background:var(--ink);color:var(--bg)}
+.cartbtn{background:var(--brand);color:var(--brand-ink);padding:8px 14px;font-weight:600}
+main{max-width:1100px;margin:auto;padding:16px}
+.view[hidden]{display:none}
+.cats{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px}
+.chip{background:var(--surface);border:1px solid var(--line);color:var(--ink);padding:8px 14px;white-space:nowrap}
+.chip[aria-pressed=true]{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.emoji{font-size:2.6rem}
+.item p{margin:0;color:var(--muted);font-size:.9rem;flex:1}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.price{font-weight:700}
+.add{background:var(--ink);color:var(--bg);padding:8px 14px;font-weight:600}
+aside{position:fixed;inset:0 0 0 auto;width:min(420px,100%);background:var(--surface);border-left:1px solid var(--line);z-index:10;transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+aside.open{transform:none}
+@media (prefers-reduced-motion:reduce){aside{transition:none}}
+.ahead{padding:16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}
+.abody{flex:1;overflow:auto;padding:16px}
+.line{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.line .nm{flex:1}
+.qty{display:flex;align-items:center;gap:6px}
+.qty button{width:28px;height:28px;background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+label{display:block;font-size:.85rem;font-weight:600;margin:12px 0 4px}
+input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+.afoot{padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}
+.sum{display:flex;justify-content:space-between;margin:4px 0}
+.total{font-weight:800;font-size:1.15rem}
+.go{width:100%;background:var(--brand);color:var(--brand-ink);padding:13px;font-weight:700;margin-top:10px}
+.go:disabled{opacity:.5;cursor:not-allowed}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9}
+.scrim[hidden]{display:none}
+.order{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.badge{padding:3px 10px;border-radius:99px;font-size:.8rem;font-weight:700;background:var(--bg);border:1px solid var(--line)}
+.steps{display:flex;gap:6px;margin:12px 0}
+.step{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.step.on{background:var(--ok)}
+.empty{color:var(--muted);text-align:center;padding:40px 0}
+.kan{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.col h3{margin-bottom:8px}
+.mini{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px;font-size:.9rem}
+.mini button{margin-top:6px;background:var(--ok);color:var(--bg);padding:6px 10px;font-weight:600}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;z-index:20}
+.toast[hidden]{display:none}
+.stats{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+.stat b{display:block;font-size:1.4rem}
+
+/* ---------- Painel do vendedor ---------- */
+.loginbox{min-height:100vh;display:grid;place-items:center;padding:16px}
+.loginbox form{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;width:min(380px,100%)}
+.err{color:var(--brand);min-height:1.2em;margin:8px 0 0;font-size:.9rem}
+.formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0 14px}
+.formgrid .full{grid-column:1/-1}
+.danger{background:transparent;color:var(--brand);border:1px solid var(--brand);padding:6px 10px;font-weight:600}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.acts button{margin-top:0}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.8rem;color:var(--muted)}
