@@ -25,8 +25,13 @@ function toast(m) {
 
 /* ---------- Login ---------- */
 function gate() {
+  console.log("logged", logged());
   $("#login").hidden = logged();
   $("#panel").hidden = !logged();
+
+  console.log("login hidden:", $("#login").hidden);
+  console.log("panel hidden:", $("#panel").hidden);
+
   if (logged()) refresh();
 }
 $("#loginForm").onsubmit = (e) => {

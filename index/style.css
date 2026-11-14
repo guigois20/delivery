@@ -66,6 +66,11 @@ input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid
 .stat b{display:block;font-size:1.4rem}
 
 /* ---------- Painel do vendedor ---------- */
+
+[hidden] {
+    display: none !important;
+}
+
 .loginbox{min-height:100vh;display:grid;place-items:center;padding:16px}
 .loginbox form{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;width:min(380px,100%)}
 .err{color:var(--brand);min-height:1.2em;margin:8px 0 0;font-size:.9rem}
