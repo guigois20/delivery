@@ -112,15 +112,3 @@ Os pedidos e alterações feitos em uma aba são sincronizados com outras abas a
 - Não há integração com pagamento, envio de mensagens ou banco de dados.
 
 Para uso real, recomenda-se criar um backend, autenticação segura, banco de dados e integrações de pagamento e entrega.
-
-## Personalização
-
-- Produtos iniciais: `index/data.js`
-- Interface da loja: `index/index.html`
-- Comportamento da loja: `index/script.js`
-- Painel administrativo: `index/admin.html` e `index/admin.js`
-- Estilos: `index/style.css`
-
-## Licença
-
-Nenhuma licença foi especificada para este projeto.
