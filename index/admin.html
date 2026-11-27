@@ -28,7 +28,11 @@
           required
         />
         <p id="err" class="err" role="alert"></p>
-        <button class="go" type="submit">Entrar</button>
+        <div>
+          <button class="go" type="submit">Entrar</button>
+
+          <a class="btn-voltar" href="index.html">voltar</a>
+        </div>
       </form>
     </section>
 
@@ -72,9 +76,10 @@
                 id="catlist"
               ></datalist>
             </div>
-            <div>
-              <label for="fe">Emoji</label
-              ><input id="fe" maxlength="4" placeholder="🍽️" />
+            <div class="full">
+              <label for="fi">Foto (opcional)</label>
+              <input id="fi" type="file" accept="image/*" />
+              <small id="fiinfo" style="color: var(--muted)"></small>
             </div>
             <div class="full">
               <label for="fd">Descrição</label><input id="fd" maxlength="120" />
@@ -88,9 +93,6 @@
 
           <div class="row" style="margin: 24px 0 10px">
             <h2>Itens do cardápio</h2>
-            <button class="chip" id="resetMenu">
-              Restaurar cardápio padrão
-            </button>
           </div>
           <div class="tablewrap"><table id="menuTable"></table></div>
         </section>

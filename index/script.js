@@ -1,14 +1,20 @@
-const MENU = loadMenu();
+let MENU = [];
 const FEE = 6,
   STAGES = ["Recebido", "Em preparo", "Saiu para entrega", "Entregue"];
+let cart = {},
+  cat = "Todos",
+  orders = [];
 const R = (n) =>
   n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const $ = (s) => document.querySelector(s);
-let cart = {},
-  cat = "Todos",
-  { orders, seq } = loadOrders();
-
-const save = () => saveOrders(orders, seq);
+const esc = (s) =>
+  String(s ?? "").replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        c
+      ],
+  );
 
 function toast(m) {
   const t = $("#toast");
@@ -23,13 +29,13 @@ function renderMenu() {
   $("#cats").innerHTML = cats
     .map(
       (c) =>
-        `<button class="chip" aria-pressed="${c === cat}" data-c="${c}">${c}</button>`,
+        `<button class="chip" aria-pressed="${c === cat}" data-c="${esc(c)}">${esc(c)}</button>`,
     )
     .join("");
   $("#grid").innerHTML = MENU.filter((i) => cat === "Todos" || i.c === cat)
     .map(
       (i) => `
-   <article class="item"><div class="emoji" aria-hidden="true">${i.e}</div><h3>${i.n}</h3><p>${i.d}</p>
+   <article class="item"><div class="emoji" aria-hidden="true">${i.i ? `<img class="foto" loading="lazy" src="${API}/uploads/${encodeURIComponent(i.i)}" alt="">` : esc(i.e)}</div><h3>${esc(i.n)}</h3><p>${esc(i.d)}</p>
    <div class="row"><span class="price">${R(i.p)}</span><button class="add" data-id="${i.id}">Adicionar</button></div></article>`,
     )
     .join("");
@@ -65,7 +71,7 @@ function renderCart() {
         .map((id) => {
           const i = MENU.find((m) => m.id == id);
           return `
-   <div class="line"><span class="nm">${i.n}<br><small>${R(i.p)}</small></span>
+   <div class="line"><span class="nm">${esc(i.n)}<br><small>${R(i.p)}</small></span>
    <div class="qty"><button data-m="${id}" aria-label="Diminuir">−</button><b>${cart[id]}</b><button data-p="${id}" aria-label="Aumentar">+</button></div></div>`;
         })
         .join("")
@@ -95,8 +101,7 @@ $("#openCart").onclick = () => openCart(true);
 $("#closeCart").onclick = () => openCart(false);
 $("#scrim").onclick = () => openCart(false);
 
-$("#send").onclick = () => {
-  ({ orders, seq } = loadOrders());
+$("#send").onclick = async () => {
   const nome = $("#nome").value.trim(),
     tel = $("#tel").value.trim(),
     end = $("#end").value.trim();
@@ -104,36 +109,37 @@ $("#send").onclick = () => {
     toast("Preencha nome, telefone e endereço");
     return;
   }
-  const t = totals();
-  orders.unshift({
-    id: seq++,
-    nome,
-    tel,
-    end,
-    pag: $("#pag").value,
-    obs: $("#obs").value.trim(),
-    itens: Object.entries(cart).map(([id, q]) => ({
-      n: MENU.find((m) => m.id == id).n,
-      q,
-    })),
-    total: t.tot,
-    stage: 0,
-    hora: new Date().toLocaleTimeString("pt-BR", {
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
-  });
-  save();
-  cart = {};
-  renderCart();
-  openCart(false);
-  $("#obs").value = "";
-  toast("Pedido feito! Acompanhe em Meus pedidos");
-  show("orders");
+  $("#send").disabled = true;
+  try {
+    const r = await api("/pedidos", {
+      method: "POST",
+      body: JSON.stringify({
+        nome,
+        telefone: tel,
+        endereco: end,
+        pagamento: $("#pag").value,
+        observacoes: $("#obs").value.trim(),
+        itens: Object.entries(cart).map(([id, q]) => ({
+          id: Number(id),
+          quantidade: q,
+        })),
+      }),
+    });
+    localStorage.setItem("meu_telefone", tel); // para achar "Meus pedidos" depois
+    cart = {};
+    renderCart();
+    openCart(false);
+    $("#obs").value = "";
+    toast(`Pedido #${r.id} feito! Acompanhe em Meus pedidos`);
+    show("orders");
+  } catch (e) {
+    toast(e.message);
+    renderCart(); // reabilita o botão
+  }
 };
 
 function itemsTxt(o) {
-  return o.itens.map((i) => `${i.q}× ${i.n}`).join(", ");
+  return o.itens.map((i) => `${i.q}× ${esc(i.n)}`).join(", ");
 }
 function renderOrders() {
   $("#myOrders").innerHTML = orders.length
@@ -142,7 +148,7 @@ function renderOrders() {
           (o) => `
    <div class="order"><div class="row"><b>Pedido #${o.id}</b><span class="badge">${STAGES[o.stage]}</span></div>
    <div class="steps">${STAGES.map((_, i) => `<div class="step ${i <= o.stage ? "on" : ""}"></div>`).join("")}</div>
-   <div>${itemsTxt(o)}</div><div style="color:var(--muted);font-size:.9rem">${o.end} · ${o.pag} · ${o.hora}</div>
+   <div>${itemsTxt(o)}</div><div style="color:var(--muted);font-size:.9rem">${esc(o.end)} · ${esc(o.pag)} · ${esc(o.hora)}</div>
    <div class="price" style="margin-top:6px">${R(o.total)}</div></div>`,
         )
         .join("")
@@ -156,23 +162,38 @@ function show(v) {
   document
     .querySelectorAll(".tab")
     .forEach((t) => t.setAttribute("aria-selected", t.dataset.v === v));
-  if (v === "orders") {
-    ({ orders, seq } = loadOrders());
-    renderOrders();
-  }
+  if (v === "orders") loadMyOrders();
 }
+
 document.querySelector(".tabs").onclick = (e) => {
   const v = e.target.dataset.v;
   if (v) show(v);
 };
 
-renderMenu();
-renderCart();
+async function loadMyOrders() {
+  const tel = localStorage.getItem("meu_telefone");
+  if (!tel) {
+    orders = [];
+    return renderOrders();
+  }
+  try {
+    orders = await api("/pedidos/telefone/" + encodeURIComponent(tel));
+    renderOrders();
+  } catch (e) {}
+}
+
+async function init() {
+  try {
+    MENU = await api("/produtos");
+  } catch (e) {
+    toast("Não foi possível carregar o cardápio");
+  }
+  renderMenu();
+  renderCart();
+}
+init();
 
 // atualiza o status dos pedidos quando o vendedor avançar a etapa
 setInterval(() => {
-  if (!$("#v-orders").hidden) {
-    ({ orders, seq } = loadOrders());
-    renderOrders();
-  }
+  if (!$("#v-orders").hidden) loadMyOrders();
 }, 3000);
